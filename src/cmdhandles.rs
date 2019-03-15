@@ -83,7 +83,7 @@ fn register_rss(bot: &telebot::RcBot, db: Database) {
                 None => Err((bot, chat_id)),
             }.into_future()
                 .or_else(|(bot, chat_id)| {
-                    bot.message(chat_id, "订阅列表为空".to_string())
+                    bot.message(chat_id, "訂閱列表為空".to_string())
                         .send()
                         .then(|r| match r {
                             Ok(_) => Err(None),
@@ -92,7 +92,7 @@ fn register_rss(bot: &telebot::RcBot, db: Database) {
                 })
         })
         .and_then(|(bot, raw, chat_id, mut feeds)| {
-            let text = String::from("订阅列表:");
+            let text = String::from("訂閱列表:");
             if !raw {
                 feeds.sort_by_key(|feed| pinyin_order::as_pinyin(&feed.title));
                 let msgs = format_and_split_msgs(text, &feeds, |feed| {
@@ -174,7 +174,7 @@ fn register_sub(bot: &telebot::RcBot, db: Database, lphandle: Handle) {
                 Ok((bot, db, subscriber, feed_link, chat_id, lphandle))
             }.into_future()
                 .or_else(|(bot, chat_id)| {
-                    bot.message(chat_id, "已订阅过的 RSS".to_string())
+                    bot.message(chat_id, "已訂閱過的 RSS".to_string())
                         .send()
                         .then(|result| match result {
                             Ok(_) => Err(None),
@@ -183,7 +183,7 @@ fn register_sub(bot: &telebot::RcBot, db: Database, lphandle: Handle) {
                 })
         })
         .and_then(|(bot, db, subscriber, feed_link, chat_id, lphandle)| {
-            bot.message(chat_id, "处理中, 请稍候".to_owned())
+            bot.message(chat_id, "處理中, 請稍候".to_owned())
                 .send()
                 .map_err(Some)
                 .map(move |(bot, msg)| {
@@ -208,7 +208,7 @@ fn register_sub(bot: &telebot::RcBot, db: Database, lphandle: Handle) {
                         bot.edit_message_text(
                             chat_id,
                             msg_id,
-                            format!("订阅失败: {}", to_chinese_error_msg(e)),
+                            format!("訂閱失敗: {}", to_chinese_error_msg(e)),
                         ).send()
                             .then(|result| match result {
                                 Ok(_) => Err(None),
@@ -224,7 +224,7 @@ fn register_sub(bot: &telebot::RcBot, db: Database, lphandle: Handle) {
                     chat_id,
                     msg_id,
                     format!(
-                        "《<a href=\"{}\">{}</a>》订阅成功",
+                        "《<a href=\"{}\">{}</a>》訂閱成功",
                         EscapeUrl(source),
                         Escape(&feed.title)
                     ),
@@ -232,7 +232,7 @@ fn register_sub(bot: &telebot::RcBot, db: Database, lphandle: Handle) {
                     .disable_web_page_preview(true)
                     .send(),
                 Err(Error(ErrorKind::AlreadySubscribed, _)) => {
-                    bot.edit_message_text(chat_id, msg_id, "已订阅过的 RSS".to_string())
+                    bot.edit_message_text(chat_id, msg_id, "已訂閱過的 RSS".to_string())
                         .send()
                 }
                 Err(e) => {
@@ -302,7 +302,7 @@ fn register_unsub(bot: &telebot::RcBot, db: Database) {
                 Ok(feed) => bot.message(
                     chat_id,
                     format!(
-                        "《<a href=\"{}\">{}</a>》退订成功",
+                        "《<a href=\"{}\">{}</a>》退訂成功",
                         EscapeUrl(&feed.link),
                         Escape(&feed.title)
                     ),
@@ -310,7 +310,7 @@ fn register_unsub(bot: &telebot::RcBot, db: Database) {
                     .disable_web_page_preview(true)
                     .send(),
                 Err(Error(ErrorKind::NotSubscribed, _)) => {
-                    bot.message(chat_id, "未订阅过的 RSS".to_string())
+                    bot.message(chat_id, "未訂閱過的 RSS".to_string())
                         .send()
                 }
                 Err(e) => {
@@ -343,8 +343,8 @@ fn register_unsubthis(bot: &telebot::RcBot, db: Database) {
                     bot.message(
                         chat_id,
                         "使用方法: \
-                         使用此命令回复想要退订的 RSS 消息即可退订,\
-                         不支持 Channel"
+                         使用此命令回覆想要退訂的 RSS 訊息即可退訂,\
+                         不支援 Channel"
                             .to_string(),
                     ).send()
                         .then(|result| match result {
@@ -364,7 +364,7 @@ fn register_unsubthis(bot: &telebot::RcBot, db: Database) {
                 Err((bot, chat_id))
             }.into_future()
                 .or_else(|(bot, chat_id)| {
-                    bot.message(chat_id, "无法识别的消息".to_string())
+                    bot.message(chat_id, "無法識別的訊息".to_string())
                         .send()
                         .then(|result| match result {
                             Ok(_) => Err(None),
@@ -385,7 +385,7 @@ fn register_unsubthis(bot: &telebot::RcBot, db: Database) {
                 Err((bot, chat_id))
             }.into_future()
                 .or_else(|(bot, chat_id)| {
-                    bot.message(chat_id, "无法找到此订阅".to_string())
+                    bot.message(chat_id, "無法找到此訂閱".to_string())
                         .send()
                         .then(|result| match result {
                             Ok(_) => Err(None),
@@ -398,7 +398,7 @@ fn register_unsubthis(bot: &telebot::RcBot, db: Database) {
                 Ok(feed) => bot.message(
                     chat_id,
                     format!(
-                        "《<a href=\"{}\">{}</a>》退订成功",
+                        "《<a href=\"{}\">{}</a>》退訂成功",
                         EscapeUrl(&feed.link),
                         Escape(&feed.title)
                     ),
@@ -446,19 +446,19 @@ fn check_channel<'a>(
         });
     let bot = bot.clone();
     async_block! {
-        let msg = await!(bot.message(chat_id, "正在验证 Channel".to_string()).send())?.1;
+        let msg = await!(bot.message(chat_id, "正在驗證 Channel".to_string()).send())?.1;
         let msg_id = msg.message_id;
         let channel = match await!(bot.get_chat(channel).send()) {
             Ok((_, channel)) => channel,
             Err(telebot::Error::Telegram(_, err_msg, _)) => {
-                let msg = format!("无法找到目标 Channel: {}", err_msg);
+                let msg = format!("無法找到目標 Channel: {}", err_msg);
                 await!(bot.edit_message_text(chat_id, msg_id, msg).send())?;
                 return Ok(None);
             }
             Err(e) => return Err(e),
         };
         if channel.kind != "channel" {
-            let msg = "目标需为 Channel".to_string();
+            let msg = "目標需為 Channel".to_string();
             await!(bot.edit_message_text(chat_id, msg_id, msg).send())?;
             return Ok(None);
         }
@@ -470,7 +470,7 @@ fn check_channel<'a>(
                 .map(|member| member.user.id)
                 .collect::<Vec<i64>>(),
             Err(telebot::Error::Telegram(_, err_msg, _)) => {
-                let msg = format!("请先将本 Bot 加入目标 Channel并设为管理员: {}", err_msg);
+                let msg = format!("請先將本 Bot 加入目標 Channel並設為管理員: {}", err_msg);
                 await!(bot.edit_message_text(chat_id, msg_id, msg).send())?;
                 return Ok(None);
             }
@@ -478,13 +478,13 @@ fn check_channel<'a>(
         };
 
         if !admins_list.contains(&bot.inner.id) {
-            let msg = "请将本 Bot 设为管理员".to_string();
+            let msg = "請將本 Bot 設為管理員".to_string();
             await!(bot.edit_message_text(chat_id, msg_id, msg).send())?;
             return Ok(None);
         }
 
         if !admins_list.contains(&user_id) {
-            let msg = "该命令只能由 Channel 管理员使用".to_string();
+            let msg = "該命令只能由 Channel 管理員使用".to_string();
             await!(bot.edit_message_text(chat_id, msg_id, msg).send())?;
             return Ok(None);
         }
@@ -541,7 +541,7 @@ fn register_export(bot: &telebot::RcBot, db: Database) {
                 None => Err((bot, chat_id)),
             }.into_future()
                 .or_else(|(bot, chat_id)| {
-                    bot.message(chat_id, "订阅列表为空".to_string())
+                    bot.message(chat_id, "訂閱列表為空".to_string())
                         .send()
                         .then(|r| match r {
                             Ok(_) => Err(None),

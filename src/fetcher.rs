@@ -95,8 +95,8 @@ fn fetch_feed_updates(
                 let err_msg = to_chinese_error_msg(e);
                 let msg = format!(
                     "《<a href=\"{}\">{}</a>》\
-                     已经连续 5 天拉取出错 ({}),\
-                     可能已经关闭, 请取消订阅",
+                     已經連續 5 天拉取出錯 ({}),\
+                     可能已經關閉, 請取消訂閱",
                     EscapeUrl(&feed.link),
                     Escape(&feed.title),
                     Escape(&err_msg)
